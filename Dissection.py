@@ -45,8 +45,7 @@ def Decrypt(rowKeys, columnKeys, Cipher, dic):
     return decrypted
         
         
-def Encrypt(Matrix, Cols, Rows):
-    numberOfBlocks = Cols*Rows
+def Encrypt(Matrix, numberofCols, numberOfBlocks):
     Blocks = [[] for i in range(numberOfBlocks)]
 
 
@@ -54,7 +53,7 @@ def Encrypt(Matrix, Cols, Rows):
         for j in range(1,COLS):
             colKey = Matrix[0][j]
             rowKey = Matrix[i][0]
-            block = defineBlock(rowKey, colKey, Cols)
+            block = defineBlock(rowKey, colKey, numberofCols)
             Blocks[block-1].append(Matrix[i][j])
     return Blocks
 
@@ -64,27 +63,38 @@ def defineBlock(r, c, n):
     return k
 
 
-def defineSection(i):
-    return (i//3 + 1)
+def defineSection(i, division):
+    return (i//division + 1)
 
 
 #message = "Metod$Rasse4eni9-Razneseni9."
-message = "Метод$рассечения-разнесения."
+#message = "Вечная беда России. Все в ней перепутано. Добро защищают дураки и мерзавцы, злу служат мученики и герои."
+
+message = input("Enter a message to encrypt: ")
+strlength = len(message)
+print("Message length:", strlength)
+blocksNumber = int(input("Enter number of blocks. Must be less than message length: ")) #blocksNumber = 16
+ColKeysNumber = int(input("Enter number of columns (must be divisor of number of blocks; Message length must be divisible by it: ")) #ColKeysNumber = 8
+RowKeysNumber = int(blocksNumber/ColKeysNumber)
+
 print("Original message:", message + '\n')
 
-COLS, ROWS = 5, 8 
+COLS = ColKeysNumber+1 
+ROWS = int(strlength//ColKeysNumber)+1
+
+ 
 Matrix = [[0 for x in range(COLS)] for y in range(ROWS)]
 
-columnKeys = random.sample(range(1,5), 4)
+columnKeys = random.sample(range(1,ColKeysNumber+1), ColKeysNumber)
 Matrix[0] = [0] + columnKeys
 
 
-repRange = list(range(1, 4))
+repRange = list(range(1, RowKeysNumber+1))
 rowKeys = list(reversed(repRange))
 
 print("Column keys:", columnKeys)
 print("Row keys:", rowKeys)
-print("Number of blocks:", len(columnKeys)*len(rowKeys) )
+print("Number of blocks:", blocksNumber)
 print()
 
 j = 0
@@ -96,6 +106,7 @@ for i in range(1,ROWS):
         j = 0
  
 
+
 dic = []
 m= 0
 for i in range(1,ROWS):
@@ -103,7 +114,7 @@ for i in range(1,ROWS):
         Matrix[i][j] = message[m]
         cKey = Matrix[0][j]
         rKey = Matrix[i][0]
-        section = defineSection(i-1)
+        section = defineSection(i-1, RowKeysNumber)
         dic.append([message[m], rKey, cKey, section])
         m += 1
 
@@ -112,7 +123,7 @@ for row in Matrix:
     print(row)
 print()   
 
-Cipher = Encrypt(Matrix, len(columnKeys), len(rowKeys))
+Cipher = Encrypt(Matrix, ColKeysNumber, blocksNumber)
 
 print("Encryption result (blocks):") 
 i=1
