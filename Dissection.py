@@ -45,8 +45,7 @@ def Decrypt(rowKeys, columnKeys, Cipher, dic):
     return decrypted
         
         
-def Encrypt(Matrix):
-    Cols, Rows = 4, 3
+def Encrypt(Matrix, Cols, Rows):
     numberOfBlocks = Cols*Rows
     Blocks = [[] for i in range(numberOfBlocks)]
 
@@ -71,7 +70,7 @@ def defineSection(i):
 
 #message = "Metod$Rasse4eni9-Razneseni9."
 message = "Метод$рассечения-разнесения."
-
+print("Original message:", message + '\n')
 
 COLS, ROWS = 5, 8 
 Matrix = [[0 for x in range(COLS)] for y in range(ROWS)]
@@ -82,6 +81,11 @@ Matrix[0] = [0] + columnKeys
 
 repRange = list(range(1, 4))
 rowKeys = list(reversed(repRange))
+
+print("Column keys:", columnKeys)
+print("Row keys:", rowKeys)
+print("Number of blocks:", len(columnKeys)*len(rowKeys) )
+print()
 
 j = 0
 for i in range(1,ROWS):
@@ -102,20 +106,26 @@ for i in range(1,ROWS):
         section = defineSection(i-1)
         dic.append([message[m], rKey, cKey, section])
         m += 1
-           
+
+print("Message distributed by defined rows and columns:")           
 for row in Matrix:
     print(row)
-    
+print()   
 
-Cipher = Encrypt(Matrix)
+Cipher = Encrypt(Matrix, len(columnKeys), len(rowKeys))
 
+print("Encryption result (blocks):") 
 i=1
 for bl in Cipher:
     print("Block number "+ str(i) + ":", bl)
     i+=1
-
+    
+print()
+print("Table structure decrypted:") 
 decrypted = Decrypt(rowKeys, columnKeys, Cipher, dic)
-print("Decrypted text:", decrypted)
+
+print()
+print("Final decrypted message:", decrypted)
 
     
 
