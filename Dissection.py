@@ -73,6 +73,7 @@ def defineSection(i, division):
 message = input("Enter a message to encrypt: ")
 strlength = len(message)
 print("Message length:", strlength)
+
 blocksNumber = int(input("Enter number of blocks. Must be less than message length: ")) #blocksNumber = 16
 ColKeysNumber = int(input("Enter number of columns (must be divisor of number of blocks; Message length must be divisible by it: ")) #ColKeysNumber = 8
 RowKeysNumber = int(blocksNumber/ColKeysNumber)
@@ -82,21 +83,20 @@ print("Original message:", message + '\n')
 COLS = ColKeysNumber+1 
 ROWS = int(strlength//ColKeysNumber)+1
 
- 
+#Zero matrix creation: 
 Matrix = [[0 for x in range(COLS)] for y in range(ROWS)]
 
+#Adding column keys:
 columnKeys = random.sample(range(1,ColKeysNumber+1), ColKeysNumber)
 Matrix[0] = [0] + columnKeys
+
 
 
 repRange = list(range(1, RowKeysNumber+1))
 rowKeys = list(reversed(repRange))
 
-print("Column keys:", columnKeys)
-print("Row keys:", rowKeys)
-print("Number of blocks:", blocksNumber)
-print()
 
+#Adding row keys:
 j = 0
 for i in range(1,ROWS):
     Matrix[i][0] = rowKeys[j]
@@ -105,8 +105,12 @@ for i in range(1,ROWS):
     if j >= len(rowKeys):
         j = 0
  
+print("Column keys:", columnKeys)
+print("Row keys:", rowKeys)
+print("Number of blocks:", blocksNumber)
+print()
 
-
+#Populating the matrix with letters and creating deciphering list:
 dic = []
 m= 0
 for i in range(1,ROWS):
@@ -118,11 +122,14 @@ for i in range(1,ROWS):
         dic.append([message[m], rKey, cKey, section])
         m += 1
 
+
+
 print("Message distributed by defined rows and columns:")           
 for row in Matrix:
     print(row)
 print()   
 
+#Distributing message by blocks based on column and row keys:
 Cipher = Encrypt(Matrix, ColKeysNumber, blocksNumber)
 
 print("Encryption result (blocks):") 
@@ -130,15 +137,15 @@ i=1
 for bl in Cipher:
     print("Block number "+ str(i) + ":", bl)
     i+=1
-    
+
+   
 print()
 print("Table structure decrypted:") 
 decrypted = Decrypt(rowKeys, columnKeys, Cipher, dic)
 
 print()
 print("Final decrypted message:", decrypted)
-
-    
+ 
 
 
 
